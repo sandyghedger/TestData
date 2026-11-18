@@ -1,102 +1,288 @@
-# Radiation M1 reference fixtures
+# Radiation payload provenance
 
-This folder contains 14 gzip-compressed binary fixtures for GRHayL's Radiation
-M1 unit tests. Each fixture stores paired baseline and perturbed inputs,
-reference outputs computed by THC_M1, and comparison metadata. The complete set
-occupies about 5.6 MB compressed (about 178 MB decompressed) and holds 123,702
-records.
+This file records where the payload came from, which reference variant each
+family uses, how regeneration is demonstrated, and the licensing and accuracy
+caveats that accompany publication. The payload contents, record counts,
+layouts, and data checksums are in `README.md`.
 
-The fixture families are pointwise closure and moments, instantaneous sources,
-stress energy, three Rusanov flux variants, constant and varying four-point
-transport, and the Jthick scalar. These are library-level operation checks.
-They do not establish host evolution or continuum equivalence.
+## Producers and generations
 
-## Contents
+### Current curated corpus
 
-SHA-256 digests are of the decompressed payloads. Input and output counts are
-scalars per record.
+The 27 binary fixtures ship uncompressed beside ordinary paired JSON/TSV/CSV
+files with descriptive family prefixes at this directory's root. Per-record `origin` and `family`
+labels are serialized in each binary fixture;
+they include `current_official_common_prepared_transport` (four-point
+transport shards), `external_thcm1_fragment`, `external_thcm1_source_fragment`,
+`external_thcm1_direct_fragment`, `external_thcm1_direct_grid`,
+`seeded`, `source_campaign`, `independent_corrected_THC_caller`,
+`independent_analytical_minerbo`, `independent_closed_form_helpers`,
+`analytic_declared_TEH78_approximation`, and
+`independent_analytical_collision`. No expected output is replaced by a
+GRHayL prediction anywhere in the payload.
 
-| Fixture | Operation | Policy | Records | In | Out | SHA-256 |
-| --- | --- | --- | ---: | ---: | ---: | --- |
-| `pointwise_closure_moments` | `pointwise_closure_moments` | `pointwise_a1_a2_v1` | 56 | 68 | 38 | `dd96fad7e6e9e1a6ca540c8ebd988146febb36e529246f245f259b3632262eb1` |
-| `m1_thcm1_instantaneous_sources` | `instantaneous_interaction_sources` | `source_a1_a2_rate_normalized_v1` | 168 | 40 | 9 | `b9af5ec09baca2dd30caed4c84d543b7ba4efe26e0f508a6ed6f8b49f1fab9c0` |
-| `stress_energy` | `stress_energy` | `strict_relative_2e-12_propagated_response_v1` | 1,024 | 21 | 10 | `ffbca306c3776a5f521cd80ed45b8073030781132b53416900d86f8cb4a66405` |
-| `rusanov_neutrino` | `neutrino_rusanov_flux` | `strict_relative_2e-12_propagated_response_v1` | 1,024 | 54 | 5 | `e014eb07b458d452a4fed40e950410d295f51e1527220686d50b8d486077b42c` |
-| `rusanov_neutrino_current` | `neutrino_rusanov_flux_current_v2` | `strict_relative_2e-12_propagated_response_current_v2` | 1,024 | 54 | 5 | `082ff615dd50f172d2d2ebce6e96dde618af5900848285c8551e2f183e937058` |
-| `rusanov_generic` | `rusanov_flux` | `strict_relative_2e-12_propagated_response_v1` | 1,024 | 17 | 4 | `57373f4d845ced0ca66914184ff401e5d4407d8f1697daa895cacc2a12bfb7e7` |
-| `transport_four_point_d0` | `neutrino_four_point_transport_flux` | `strict_relative_2e-12_propagated_response_v1` | 19,128 | 50 | 5 | `9ecf9dd7f1654c9903b91b09577fd72795ee908deadb02e6cc63553ccfd439f0` |
-| `transport_four_point_d1` | `neutrino_four_point_transport_flux` | `strict_relative_2e-12_propagated_response_v1` | 19,128 | 50 | 5 | `817102fbbce232a47ca019b44eb8822c1832a5979e261a687dbe722ac75b31e8` |
-| `transport_four_point_d2` | `neutrino_four_point_transport_flux` | `strict_relative_2e-12_propagated_response_v1` | 19,128 | 50 | 5 | `008124d5a188fc280573950c4a154e6d4e3eb056af4a021de54bdf4f626c0a8e` |
-| `transport_four_point_varying_d0` | `neutrino_four_point_prepared_transport_flux` | `strict_relative_2e-12_propagated_response_v1` | 12,960 | 50 | 5 | `38d90af8712bbb5604ba6c1ab3268bea9ed0af4294f23baa8e8430683cfd0af5` |
-| `transport_four_point_varying_d1` | `neutrino_four_point_prepared_transport_flux` | `strict_relative_2e-12_propagated_response_v1` | 12,960 | 50 | 5 | `584dc11db6f141da8d8a43c316f2c71293bfd500d9b27dcdbd18263913aa59b2` |
-| `transport_four_point_varying_d2` | `neutrino_four_point_prepared_transport_flux` | `strict_relative_2e-12_propagated_response_v1` | 12,960 | 50 | 5 | `0114c1ffba59539d8e5f077c0528c108a57be1db74693aadd79915299a9f9067` |
-| `transport_four_point_varying_controls` | `neutrino_four_point_prepared_transport_flux` | `strict_relative_2e-12_propagated_response_v1` | 23,112 | 50 | 5 | `1228631d5064e90dca2d610d8d69809f001438d24c3d2ed7070268b73220d9fb` |
-| `jthick_thcm1` | `jthick` | `pointwise_a1_a2_v1` | 6 | 20 | 1 | `3e8ebdebbc94ac5a335d25dd0065c1722b47b297db061d710d0ffe4c36ab0615` |
+The paired text corpus stores shared inputs once. The pointwise ordinary and
+mapped-xi captures share `pointwise_fixtures_seeded_packets.tsv`, and the
+source roundoff and timestep-refinement captures share
+`source_update_fixtures_roundoff_seeded_packets.tsv`. Repository-owned
+materialization supplies the historical family-relative input aliases at
+replay time; the removed duplicate copies added no cases or independent
+reference answers. The distinct captures and refinement levels are retained.
 
-The `d0`, `d1` and `d2` suffixes are the three direction shards. The
-`transport_four_point_varying_controls` records have identical baseline and
-perturbed inputs; they are fixed-input controls, not perturbation evidence.
+The corrected-reference generator is
+`Unit_Tests/radiation_pairs/corrected_reference.py` in the matching GRHayL
+checkout. It compiles THC/CPPUtils/GSL without linking GRHayL and reuses the
+reviewed correction patchers; the existing Jacobian witness checks the
+compiled corrected derivatives against analytical and finite-difference
+derivatives. The decision and regeneration procedure are documented in the
+matching checkout's `docs/raw/Corrected_THC_reference.md`.
 
-## Producer
+### Independent helper and raw-rate fixtures
 
-Every reference output is a recorded THC_M1 value from a fresh execution of
-THC_M1 source snapshots over frozen baseline and perturbed inputs. The
-pointwise, source and Jthick families use debug builds of the standalone offline
-producers. Transport uses an optimized build with HDF5 disabled. Rusanov
-extracts THC_M1's wave-speed and number-flux fragments, and stress energy uses
-the compiled THC_M1 `assemble_rT` route. The original production receipts
-identify GCC/G++ 13.3.
+`helpers_independent.bin` (107 direct-input records: 9 pair-aware transport
+opacity, 15 comoving number density including the closure-reuse companion,
+7 split LU factorize/solve, 28 dense-solver contract guards (34 inputs /
+1 status output), and 48 optional diffusion-flux contracts (34 inputs /
+3 outputs); every record is input-invariant, with the scenario carried by
+the per-record perturbation label) is produced by
+`Unit_Tests/radiation_pairs/generate_helper_fixtures.py` in the matching
+checkout. Expected values are independent of the production code paths:
+exact rational (`fractions.Fraction`) evaluation of the documented
+opacity/extinction formulas, 90-digit closed-form Lorentz scalar
+contractions `n = N J / [W(E-F.V)]` for number density, exact rational
+Gaussian elimination for the LU systems, and a 90-digit evaluation of the
+advective/Fick blending equation for the diffusion-flux contracts (an
+equation-contract reference, not an exact continuum solution or a THC
+accuracy ranking). Dense-solver negative-input records carry explicit finite
+uint32 words that reconstruct nonfinite operands at the public boundary;
+they are data inputs, not code interposition. The helper reference and
+corruption checks pass with HDF5 enabled and disabled.
 
-GRHayL builds captured during production are comparison clients, not the
-reference producer. Current GRHayL output is never used as a stored expected
-value. The captured THC_M1 snapshots carry no upstream revision (the campaign
-records them as `unversioned`), so the sources are identified by the snapshots
-themselves. The producer evidence holding them is kept outside this repository.
+`collision_independent.bin` (49 direct-input records, all input-invariant
+with the scenario carried by the perturbation label: 5 rest RHS, 30 rest
+Jacobian, 2 moving finite-difference consistency, 12 rejection guards; 94
+inputs per record, outputs 33/34/15/1 by family) is produced by
+`Unit_Tests/radiation_pairs/generate_collision_fixtures.py` in the matching
+checkout. Rest-reference Jacobian components are checked by exact-rational
+central differences of the producer's rest RHS polynomial — reference
+derivative algebra, not an independent proof of the RHS physics. Moving
+columns are finite-difference consistency checks of the production RHS, not
+an independent physical moving solution or a THC accuracy ranking.
+Rejection guards expect exact API statuses. Native replay passes with HDF5
+enabled and disabled. Corrupted baseline/perturbed answers, masks/statuses,
+normalization, record removal and oversized species tags are rejected.
+Companion checks independently evaluate the folded rest RHS and exact-rational
+derivatives. This member contains no fault-injection records.
 
-## Regeneration
+`raw_rates_independent.bin` (171 records) is produced by
+`Unit_Tests/radiation_pairs/generate_rate_fixtures.py` via high-precision
+evaluation of the DECLARED TEH78 moment approximation. It checks the
+approximation GRHayL promises, NOT exact physical Fermi-Dirac integrals.
+169 records are direct-input (including expected-rejection bounds and 20
+input-invariant controls); the remaining 2 records (`rates-0169`,
+`rates-0170`) are fault-injection records executed only by the Linux
+`--injection-fixture-dir` ELF-interposition mode and are never replayed as
+direct input, keeping ordinary and injection-assisted coverage separate.
+Fresh on/off builds pass the three rate-generator tests and the native
+consumer value/status/empty/truncation mutation controls, including the
+separately selected injection mode.
 
-A regeneration package, `radiation-m1-regeneration-pr112-v06`, rebuilds the
-producers from the frozen sources, re-executes the recorded inputs, and compares
-every newly produced payload byte for byte with the decompressed payloads above.
-In the verification run all 14 payloads were identical. Exact agreement is
-platform-specific: other CPUs, compilers or math libraries can
-change the last bits, and the comparison never relaxes a tolerance or replaces a
-reference.
+### Independent source and validation contracts
 
-The package has not yet been uploaded to a public release, so no download URL
-or archive digest is listed here. Add them to this file when it is published.
+`source_contracts_independent.bin` is produced by
+`generate_source_contract_fixtures.py`: 84 ordinary records and nine separate
+Linux injection records. Rest scalar endpoints use 90-digit integrating-factor
+ODE solutions (70/110-digit rounding agrees), while dyadic fixed-four-step
+endpoints and CC integrals use exact-rational BE recurrences. An independent
+integrating-factor quadrature checks the exponential reference. Rest stiff
+branches use the scalar BE equation, not the continuous-time answer. Pointer,
+range, diagnostic and rollback contracts include all eleven exchange fields.
+The five Python tests and native corruption controls pass in both builds.
+The dyadic solves do not test nonzero Newton work; no terminal-fallback fixture
+is supplied, and moving source-free identities are not moving-source ODE proofs.
 
-## Licensing
+`validation_contracts_independent.bin` is produced by
+`generate_validation_fixtures.py`: 95 direct-input records. Cone boundaries
+use high-precision quadratic/floor inequalities; flux norms and repair use
+high-precision metric contractions. All numerical references round identically
+at 70/110 digits. Retained-face callback contracts have analytical half-space
+examples; probe counts check the specified search procedure. The overflow-blend
+case tests the documented safe-anchor policy, not greatest-factor accuracy.
+Both endpoints and rejection rollback are checked, with three Python tests,
+native corruption controls and an actual no-op-repair mutation rejected.
+Callback failures are public caller-input contracts, not ELF interposition.
+Initialization is covered by the source member rather than duplicated here.
+Both generators live under `Unit_Tests/radiation_pairs/` in the matching checkout;
+the validation producer imports the source producer's error-enum reader.
 
-The regeneration package is a mixed-license source and evidence bundle. It
-retains the original GPL version 3 notices of the THC_M1 sources it contains
-and the BSD 2-Clause notices of the GRHayL sources, and TestData's BSD 2-Clause
-license does not relicense them. The fixture files in this folder contain
-numerical values only.
 
-## Consumption
 
-GRHayL's `.github/prepare_m1_fixtures.sh SOURCE_DIR DEST_DIR` decompresses the
-14 members into an existing empty destination directory. Its fixture readers
-open the resulting `.bin` files. The tests read stored reference values and
-recompute GRHayL outputs from the recorded inputs.
+## Corrected THC reference policy
 
-## Binary layout
+Default comparisons use the reviewed corrected THC_M1 numerical
+implementation where the fixes apply. The fixes are exact-rest arithmetic and
+analytic closure-root evaluation, lapse-consistent boost prediction and
+optical-depth branch selection, and the implicit Jacobian's opacity argument
+order and y-row derivative indexing. They do not harmonize angular closure or
+fallback models.
 
-The decompressed stream begins with the eight bytes `M1THCMB1`, followed by
-length-prefixed `operation` and `policy` strings and the record count. Integers
-are unsigned 64-bit little-endian values. Strings contain a byte length followed
-by that many bytes, without a terminator. Vectors contain an element count
-followed by IEEE 754 binary64 values in little-endian order.
+Applicability (the producer's policy receipt is emitted outside the candidate
+payload; capture sidecars are maintained with GRHayL's test support):
 
-Each record contains, in order:
+- Recaptured with corrected THC_M1: the paired `pointwise/`,
+  `pointwise_extended/`, and `source_update/` references (including the
+  roundoff cohort), on their original seeded packets. The extended
+  prepared-pressure operands are re-exported from the corrected THC tensor.
+  The separate xi quantity mapping is unchanged.
+- `source_relaxation_thcm1.bin` is recaptured through the corrected caller
+  using its original initial states, rates, timestep sequence, final time,
+  identifiers, and normalizations; its comparison policy is unchanged.
+- Already corrected and retained unchanged: the `time_refinement/` cohorts
+  and `source_relaxation_directed_thcm1.bin`.
+- Unaffected: the raw pointwise and instantaneous-source packets contain no
+  exact fluid-rest endpoints, and the prepared/fixed-state kernels (Rusanov
+  family, covariant stress-energy, geometry sources, matter/lepton/number
+  increments, scalar floors, physical E/F flux, Jthick, and the four-point
+  transport shards) do not invoke the corrected integration path, so their
+  reference values are retained rather than recaptured. Seeded inputs and the
+  comparison gates are unchanged everywhere.
 
-1. Strings: `case_id`, `pair_id`, `origin`, `seed_id`, `family`, `perturbation`.
-2. Integers: `sensitivity_start`, `sensitivity_count`.
-3. Vectors: `baseline_input`, `perturbed_input`, `baseline_output`,
-   `perturbed_output`, `normalization`.
-4. Integers: `baseline_available`, `perturbed_available`, `baseline_status`,
-   `perturbed_status`, `baseline_reference_status`, `perturbed_reference_status`.
+## Retired varying-controls corpus (`transport_four_point_varying_controls`)
 
-There is no padding or trailing data. The layout is implemented by GRHayL's
-`Unit_Tests/m1_helpers/m1_thcm1_fixture_utils.c`.
+The pre-migration corpus paired 38,880 changed-input variable-volume pairs
+(12,960 per direction shard) with 23,112 input-invariant control records in a
+separate `transport_four_point_varying_controls*` member. Independent decode
+of the removed member shows every control record carries byte-identical
+complete 50-field baseline and perturbed input vectors, byte-identical
+baseline and perturbed output vectors, and `sensitivity_count == 0`.
+
+What removal changed:
+
+- The removed member added broad fixed-input sampling and repeated-input
+  consistency evidence (replaying the same consumed operands through GRHayL
+  against the stored identical reference outputs). It contained no
+  changed-input perturbation-sensitivity evidence, so no response or
+  sensitivity obligation is retired with it.
+- The shipped shards `transport_four_point_varying_d{0,1,2}.bin` carry 58,
+  63, and 65 changed-input pairs (186 total); each pair still supplies a
+  fixed-input reference check at each endpoint plus the common physical-flux
+  transform checks. This is explicitly reduced sampling: this document does
+  not claim the 186 pairs preserve every old sampled state, and no
+  equivalence with the retired 23,112-sample control coverage is claimed.
+- No current consumer requires the standalone controls file (it detects any
+  control records per record via `sensitivity_count == 0`, and the shipped
+  shards carry none). Because the removed evidence class was sampling breadth
+  rather than a distinct obligation, the member is not restored here. If
+  broad-scale control sampling is wanted again, re-export it from the
+  campaign tooling rather than repointing consumers at the retired bytes,
+  which survive in this repository's pre-migration commit history (the pinned
+  pre-migration revision's tree and related feature branches).
+
+## Paired data and regeneration evidence
+
+The paired files are ordinary JSON, TSV, or CSV data — original/perturbed
+inputs, captured THC results, independent references, mapped-input data, and
+refinement references. No executable code, command receipts, saved GRHayL
+replay outputs, or separate campaign manifests are distributed here.
+The copy layer in the matching checkout validates paths, member types,
+collisions and integrity, and combines the data with
+repository-owned trusted sources in a fresh result directory.
+
+Original-corpus regeneration, verified before the five independent members
+were added: a fresh run of the corrected-reference producer route
+(`Unit_Tests/radiation_pairs/corrected_reference.py` and its family build/run
+receipts) reproduced all 22 original binary fixtures byte-identically and all
+48 ZIP members with the same names and member-for-member identical bytes;
+only the ZIP container bytes differed (packaging metadata such as
+timestamps/order). The numerical input/reference members are now stored
+directly with unchanged bytes and flat prefixed filenames. Test-owned schemas,
+capture sidecars and execution controls live in GRHayL's
+`Unit_Tests/radiation_pairs/fixture_support/`; historical command receipts,
+saved GRHayL outputs and the redundant JSON view of prepared CSV inputs live
+in `Verification/Radiation/corrected_reference_migration/`. The original
+relative paths needed by the consumers are reconstructed only in temporary
+replay/regeneration output. The ZIP and folder-wide JSON manifest are retired.
+The five added binary members are independent references,
+not corrected-THC captures: fresh runs of `generate_helper_fixtures.py`,
+`generate_rate_fixtures.py`, `generate_collision_fixtures.py`,
+`generate_source_contract_fixtures.py`, and `generate_validation_fixtures.py` reproduce
+their binaries byte-identically: 107 helper, 171 rate, 49 collision,
+93 source-contract and 95 validation records.
+The full producer emits `corrected_reference_policy.json`, regenerated capture
+sidecars, and command receipts outside its `payload/` directory. Preserve these
+as regeneration evidence, not as public reference datasets; do not silently
+replace or relabel historical captures.
+Replay retains raw THC disagreement ledgers separately from independent
+mathematical-correctness results; no closure or comparator is altered by
+packaging.
+
+## Publication pairing and retained evidence
+
+Publish this data with the matching GRHayL consumer, materializer, reference
+generators and corrected-THC support. A source revision lacking those paths
+cannot reproduce this payload merely because it has a Radiation library.
+Select the published TestData revision in GRHayL's
+`.github/radiation-testdata-ref` only after that revision exists; a supplied
+`M1_FIXTURE_DIR` is the local validation route before publication.
+
+Replay receipts, capture-policy receipts, regeneration logs and numerical
+accuracy reports are GRHayL verification evidence, not TestData payload.
+Retain them outside temporary build trees, with the data-file inventory and
+the tested source revision/dirty-state information. Reused completed command
+groups must remain identified as reused; their original logs and receipts
+must accompany them. A preserved receipt documents what ran, not a fresh
+rebuild of a later source revision. Uncommitted source state cannot be given
+an immutable published revision until publication is authorized.
+
+Mandatory mathematical-correctness results, raw cross-code disagreements and
+supplementary diagnostic failures must remain separately visible. Symmetric
+checks compare each code's own supplied E/F with an independently evaluated
+number-to-lepton chain. GRHayL's local exchange can instead consume its
+already rounded published number, so reproducing that expression can explain
+a diagnostic difference without certifying the upstream number or E/F.
+THC's internal number increment is not serialized; an exact cancellation
+attribution for its analogous failures is not established by the stored
+number alone. THC-method residual checks are also distinct from a comparison
+to a common continuous-time physical solution. Their failures are retained,
+not reclassified as shared-target accuracy wins or silently suppressed.
+
+## Licensing and attribution caveats
+
+- TestData (this repository) and GRHayL (the matching checkout) are BSD
+  2-Clause licensed, copyright (c) 2022 Samuel Cupp; see the repository-root
+  `LICENSE` files.
+- The THC-derived references were produced with THC_M1 (Templated Hydrodynamics
+  Code, copyright David Radice, GPL-3.0-or-later). THC/CPPUtils producer
+  sources appear only as snapshots inside the matching GRHayL checkout's
+  producer and fixture-support paths; they are NOT distributed in this
+  TestData publication, which ships numerical data and JSON/TSV/CSV files
+  with no executable code. Redistribution and attribution obligations for
+  those producer sources follow the matching checkout's own notices.
+- Fixture numbers are data, not code; nevertheless the payload's producer
+  provenance above should be retained so downstream users preserve correct
+  attribution of the THC_M1 reference implementation and the GRHayL test
+  infrastructure.
+
+## Accuracy limits
+
+- Fixtures measure discrete cross-code agreement for the recorded inputs and
+  comparison policies; replay does not prove host-level evolution or
+  continuum validation, and passing independent correctness checks is not a
+  claim of universal raw equality with THC_M1.
+- Raw THC agreement ledgers and disagreement histories are retained; closure/
+  model differences and known THC issues are covered by independent
+  references (for example the analytical-Minerbo stress-energy reference and
+  the analytic frozen-rate relaxation ranking) without changing the original
+  perturbation acceptance rule.
+- The corrected reference repairs specific numerical defects; it does not
+  harmonize closure/fallback models, and applicability is recorded per family
+  as above. Prepared-kernel comparisons do not cover THC Cactus scheduling or
+  the cell-to-face reconstruction pipeline, and the direction labels in the
+  four-point corpora reuse one spacing value, so they do not validate
+  differing axis geometry.
+- Timestep-refinement attributions are reported conditionally beside the
+  unchanged gate; they are accuracy attributions, not safe-production
+  remedies or tolerance changes.
+- Agreement fixtures do not generate trusted expected M1 outputs from GRHayL,
+  and an absent reference, unexplained API error, or unvalidated solver
+  failure remains a correctness failure in replay.
